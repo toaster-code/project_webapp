@@ -16,19 +16,19 @@ Make sure you have Node.js and npm installed on your machine.
 1. Clone the repository
 
 ```cmd
-git clone https://github.com/your-username/express-gui-project.git
+git clone https://github.com/toaster-code/project_webapp.git
 ```
 
 2. Navigate to the project directory
 
 ```cmd
-cd express-gui-project
+cd project_webapp
 ```
 
 3. Install dependencies
 
 ```cmd   
-   npm install
+npm install
 ```
 
 Access the web app at [http://localhost:3000](http://localhost:3000).

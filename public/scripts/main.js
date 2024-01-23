@@ -11,3 +11,14 @@ function toggleMenu() {
         overlay.style.width = '30%';
     }
 }
+
+// Sample JavaScript for handling media files
+document.getElementById('uploadButton').addEventListener('change', handleFileUpload);
+
+function handleFileUpload(event) {
+    const fileInput = event.target;
+    const files = fileInput.files;
+
+    // Process uploaded files (images, videos, audio)
+    // Implement logic for handling each type of media file
+}

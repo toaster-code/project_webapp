@@ -1,19 +1,35 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/styles/style.css">
-    <title>Express GUI</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>File List</title>
+  <style>
+    /* Your CSS styles here */
+  </style>
 </head>
 <body>
-    <button onclick="alert('Button Clicked!')">Click me</button>
-    <div class="burger-menu" onclick="toggleMenu()">&#9776; Burger Menu</div>
-    <div class="left-panel" id="leftPanel">
-        <!-- Content for the left panel -->
-        <p>This is the left panel content.</p>
-    </div>
-    <div class="overlay" id="overlay" onclick="toggleMenu()"></div>
-    <script src="/scripts/main.js"></script>
+
+<h1>File List</h1>
+
+<ul id="fileList"></ul>
+
+<script>
+  // Fetch the file list from the server
+  fetch('/files') // Change this to '/files'
+    .then(response => response.json())
+    .then(data => {
+      const fileListElement = document.getElementById('fileList');
+
+      // Iterate through the file list and create list items
+      data.files.forEach(file => {
+        const listItem = document.createElement('li');
+        listItem.textContent = file;
+        fileListElement.appendChild(listItem);
+      });
+    })
+    .catch(error => console.error('Error fetching file list:', error));
+</script>
+
 </body>
 </html>

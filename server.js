@@ -1,52 +1,40 @@
 const express = require('express');
+const multer = require('multer');
 const path = require('path');
-const fs = require('fs');
 
 const app = express();
 const port = 3000;
 const mediaFolderPath = './views'; // Replace with the path to your media folder
 
-// Serve media files from the mounted NAS share
-app.use('/media', express.static(mediaFolderPath));
-
-// Endpoint to get the list of files
-app.get('/files', (req, res) => {
-  // Read the contents of the media folder
-  fs.readdir(mediaFolderPath, (err, files) => {
-    if (err) {
-      console.error('Error reading media folder:', err);
-      return res.status(500).send('Internal Server Error');
-    }
-
-    // Filter out directories (you may adjust this based on your needs)
-    const fileList = files.filter(file => !fs.statSync(path.join(mediaFolderPath, file)).isDirectory());
-
-    // Send the list of files to the client
-    res.json({ files: fileList });
-  });
+// Set up multer for handling file uploads
+const storage = multer.diskStorage({
+  destination: mediaFolderPath,
+  filename: (req, file, cb) => {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname));
+  },
 });
 
-// Serve the HTML page with clickable links to the files
+const upload = multer({ storage: storage, limits: { fileSize: 10 * 1024 * 1024 } });
+
+// Serve the HTML page with the file upload form
 app.get('/', (req, res) => {
-  // Read the contents of the media folder
-  fs.readdir(mediaFolderPath, (err, files) => {
-    if (err) {
-      console.error('Error reading media folder:', err);
-      return res.status(500).send('Internal Server Error');
-    }
+  const uploadForm = `
+    <form action="/upload" method="post" enctype="multipart/form-data">
+      <input type="file" name="mp3File" accept=".mp3" required>
+      <button type="submit">Upload MP3</button>
+    </form>
+  `;
 
-    // Filter out directories (you may adjust this based on your needs)
-    const fileList = files.filter(file => !fs.statSync(path.join(mediaFolderPath, file)).isDirectory());
-
-    // Generate the HTML for the list of files
-    const html = fileList.map(file => `<a href="/media/${file}">${file}</a>`).join('<br>');
-
-    // Send the HTML to the client
-    res.send(html);
-  });
+  // Send the HTML with the file upload form to the client
+  res.send(uploadForm);
 });
 
-// ... other routes and middleware
+// Endpoint for handling file uploads
+app.post('/upload', upload.single('mp3File'), (req, res) => {
+  // File has been uploaded successfully
+  res.send('File uploaded successfully!');
+});
 
 // Start the server
 app.listen(port, () => {
